@@ -10,8 +10,7 @@ import java.util.StringTokenizer;
 
 public class Q6808 {
 	
-	static int[] kyu;
-	static List<Integer> in;
+	static int[] kyu,in;
 	static int win,lose;
 	
 	public static void main(String[] args) throws IOException {
@@ -24,7 +23,7 @@ public class Q6808 {
 			
 			win = 0; lose = 0;
 			kyu = new int[9];
-			in = new ArrayList<>();
+			in = new int[9];
 			boolean[] check = new boolean[19];
 			
 			for (int j = 0; j < 9; j++) {
@@ -33,38 +32,29 @@ public class Q6808 {
 				check[num] = true;
 			}
 			
+			int idx = 0;
 			for (int j = 1; j < check.length; j++) {
-				if(!check[j]) in.add(j);
+				if(!check[j]) in[idx++] = j;
 			}
 			
-			makePermu(new boolean[9],new int[9],0);
+			makePermu(new boolean[9],0,0,0);
 			System.out.println("#"+i+" "+win+" "+lose);
 		}
 	}
 
-	private static void makePermu(boolean[] vs,int[] temp,int curr) {
+	private static void makePermu(boolean[] vs,int curr, int kyuSum, int inSum) {
 		if(curr==9) {
-			cal(temp);
+			if(kyuSum>inSum) win++;
+			else lose++;
 		}else {
-			for (int i = 0; i < in.size(); i++) {
+			for (int i = 0; i < 9; i++) {
 				if(!vs[i]) {
 					vs[i] = true;
-					temp[curr] = in.get(i);
-					makePermu(vs,temp,curr+1);
+					if(kyu[curr]>in[i]) makePermu(vs, curr+1, kyuSum+kyu[curr]+in[i], inSum);
+					else makePermu(vs, curr+1, kyuSum, inSum+kyu[curr]+in[i]);
 					vs[i] = false;
 				}
 			}
 		}
-	}
-
-	private static void cal(int[] temp) {
-		int kyuScore = 0, inScore = 0;
-		for (int i = 0; i < 9; i++) {
-			if(kyu[i]>temp[i]) kyuScore += (kyu[i]+temp[i]);
-			else inScore += (kyu[i]+temp[i]);
-		}
-		
-		if(kyuScore>inScore) win++;
-		else lose++;
 	}
 }
